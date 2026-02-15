@@ -1,6 +1,6 @@
 import type { FreeAgentContact } from '../types/freeagent/index.js';
 import type { LLMContact } from '../types/llm/index.js';
-import { extractId, parseNumericString, computeFullName } from './common.js';
+import { extractId, parseNumericString, computeFullName, capitalizeStatus } from './common.js';
 
 export function transformContact(contact: FreeAgentContact): LLMContact {
   return {
@@ -10,7 +10,7 @@ export function transformContact(contact: FreeAgentContact): LLMContact {
     email: contact.email,
     phoneNumber: contact.phone_number,
     accountBalance: parseNumericString(contact.account_balance),
-    status: contact.status,
+    status: capitalizeStatus(contact.status) as LLMContact['status'],
     activeProjectsCount: contact.active_projects_count,
     paymentTermsDays: contact.default_payment_terms_in_days,
   };

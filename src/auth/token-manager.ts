@@ -6,6 +6,8 @@ const MAX_REFRESH_PER_MINUTE = 15;
 
 export interface TokenManager {
   getAccessToken(): Promise<string>;
+  /** Force a token refresh on the next getAccessToken() call (e.g. after a 401). */
+  invalidateAccessToken(): void;
   setTokens(tokens: TokenData): Promise<void>;
   isAuthenticated(): boolean;
   clearTokens(): Promise<void>;
@@ -68,6 +70,14 @@ export function createTokenManager(store: TokenStore): TokenManager {
       }
 
       return tokens.accessToken;
+    },
+
+    invalidateAccessToken(): void {
+      const tokens = store.get();
+      if (tokens) {
+        tokens.expiresAt = 0;
+        store.set(tokens);
+      }
     },
 
     async setTokens(tokens: TokenData): Promise<void> {

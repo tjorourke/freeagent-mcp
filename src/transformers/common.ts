@@ -2,8 +2,17 @@ import { extractId, parseNumericString } from '../utils/validators.js';
 
 export { extractId, parseNumericString };
 
+/**
+ * Normalize status strings from the FreeAgent API to consistent Title Case.
+ * The API returns lowercase statuses (e.g., "active", "overdue") but our
+ * LLM types and tool logic expect capitalized forms (e.g., "Active", "Overdue").
+ */
+export function capitalizeStatus(status: string): string {
+  return status.replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export function computeDaysOverdue(dueDate: string, status: string): number | undefined {
-  if (status !== 'Overdue') {
+  if (capitalizeStatus(status) !== 'Overdue') {
     return undefined;
   }
 

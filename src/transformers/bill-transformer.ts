@@ -1,6 +1,6 @@
 import type { FreeAgentBill, FreeAgentBillItem } from '../types/freeagent/index.js';
 import type { LLMBill, LLMBillItem } from '../types/llm/index.js';
-import { extractId, parseNumericString } from './common.js';
+import { extractId, parseNumericString, capitalizeStatus } from './common.js';
 
 export function transformBillItem(item: FreeAgentBillItem): LLMBillItem {
   return {
@@ -31,7 +31,7 @@ export function transformBill(
     salesTaxValue: parseNumericString(bill.sales_tax_value),
     paidValue: parseNumericString(bill.paid_value),
     dueValue: parseNumericString(bill.due_value),
-    status: bill.status as LLMBill['status'],
+    status: capitalizeStatus(bill.status) as LLMBill['status'],
     items: bill.bill_items?.map(transformBillItem),
     comments: bill.comments,
   };

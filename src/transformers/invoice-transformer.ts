@@ -1,6 +1,6 @@
 import type { FreeAgentInvoice, FreeAgentInvoiceItem } from '../types/freeagent/index.js';
 import type { LLMInvoice, LLMInvoiceItem } from '../types/llm/index.js';
-import { extractId, parseNumericString, computeDaysOverdue, computeLineTotal } from './common.js';
+import { extractId, parseNumericString, computeDaysOverdue, computeLineTotal, capitalizeStatus } from './common.js';
 
 export function transformInvoiceItem(item: FreeAgentInvoiceItem): LLMInvoiceItem {
   return {
@@ -34,7 +34,7 @@ export function transformInvoice(
     totalValue: parseNumericString(invoice.total_value),
     paidValue: parseNumericString(invoice.paid_value),
     dueValue: parseNumericString(invoice.due_value),
-    status: invoice.status as LLMInvoice['status'],
+    status: capitalizeStatus(invoice.status) as LLMInvoice['status'],
     daysOverdue: computeDaysOverdue(invoice.due_on, invoice.status),
     items: invoice.invoice_items.map(transformInvoiceItem),
     comments: invoice.comments,
