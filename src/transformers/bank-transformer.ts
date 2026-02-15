@@ -8,7 +8,7 @@ import type {
   LLMBankTransaction,
   LLMBankTransactionExplanation,
 } from '../types/llm/index.js';
-import { extractId, parseNumericString } from './common.js';
+import { extractId, parseNumericString, capitalizeStatus } from './common.js';
 
 export function transformBankAccount(account: FreeAgentBankAccount): LLMBankAccount {
   return {
@@ -18,7 +18,7 @@ export function transformBankAccount(account: FreeAgentBankAccount): LLMBankAcco
     currency: account.currency,
     currentBalance: parseNumericString(account.current_balance),
     openingBalance: parseNumericString(account.opening_balance),
-    status: account.status,
+    status: capitalizeStatus(account.status) as LLMBankAccount['status'],
     isPrimary: account.is_primary,
     latestActivityDate: account.latest_activity_date,
   };

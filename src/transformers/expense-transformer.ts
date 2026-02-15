@@ -1,6 +1,6 @@
 import type { FreeAgentExpense } from '../types/freeagent/index.js';
 import type { LLMExpense } from '../types/llm/index.js';
-import { extractId, parseNumericString } from './common.js';
+import { extractId, parseNumericString, capitalizeStatus } from './common.js';
 
 export function transformExpense(expense: FreeAgentExpense): LLMExpense {
   return {
@@ -13,7 +13,7 @@ export function transformExpense(expense: FreeAgentExpense): LLMExpense {
     salesTaxValue: expense.sales_tax_value ? parseNumericString(expense.sales_tax_value) : undefined,
     description: expense.description,
     projectId: expense.project ? extractId(expense.project) : undefined,
-    status: expense.status,
+    status: capitalizeStatus(expense.status) as LLMExpense['status'],
   };
 }
 
