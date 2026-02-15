@@ -33,6 +33,7 @@ import * as prompts from './prompts/index.js';
 
 export interface FreeAgentMcpServer {
   server: Server;
+  tokenStore: ReturnType<typeof createTokenStore>;
   getAuthorizationUrl: (state?: string) => string;
   handleAuthorizationCode: (code: string) => Promise<void>;
   isAuthenticated: () => boolean;
@@ -789,6 +790,7 @@ export function createFreeAgentMcpServer(): FreeAgentMcpServer {
 
   return {
     server,
+    tokenStore,
     getAuthorizationUrl: (state?: string) => generateAuthorizationUrl(state),
     handleAuthorizationCode: async (code: string) => {
       const tokens = await exchangeCodeForTokens(code);
