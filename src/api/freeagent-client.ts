@@ -29,7 +29,8 @@ export function createFreeAgentClient(tokenManager: TokenManager): FreeAgentClie
     method: string,
     endpoint: string,
     body?: unknown,
-    params?: Record<string, string>
+    params?: Record<string, string>,
+    _retried401 = false
   ): Promise<T> {
     return withRetry(async () => {
       await rateLimiter.checkLimits();
@@ -62,6 +63,12 @@ export function createFreeAgentClient(tokenManager: TokenManager): FreeAgentClie
       rateLimiter.recordRequest();
 
       if (!response.ok) {
+        // On 401, the stored access token may have been revoked externally.
+        // Force a refresh and retry once before giving up.
+        if (response.status === 401 && !_retried401) {
+          tokenManager.invalidateAccessToken();
+          return request<T>(method, endpoint, body, params, true);
+        }
         const error = await parseErrorResponse(response);
         throw error;
       }
